@@ -1,0 +1,722 @@
+{
+  "project": "BANKOO",
+  "version": "0.1",
+  "assets_count": 68,
+  "language": "ar",
+  "notes": [
+    "أصول أولية مستخرجة من لوحات مفاهيم مرسومة، وليست ملفات SVG قابلة للتحرير.",
+    "ممنوع استعمال أيقونة الخنزير للادخار. استخدم الخزنة الزرقاء أو وعاء العملات.",
+    "أي نص أو رقم مالي ظاهر في صورة توضيحية يجب مراجعته قبل عرضه في التطبيق النهائي."
+  ],
+  "assets": [
+    {
+      "category": "branding",
+      "name": "bankoo-logo",
+      "path": "branding/bankoo-logo.png",
+      "dimensions": [
+        215,
+        172
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "mascot",
+      "name": "bankoo-guide-hero",
+      "path": "mascot/bankoo-guide-hero.png",
+      "dimensions": [
+        272,
+        394
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "mascot/expressions",
+      "name": "happy",
+      "path": "mascot/expressions/happy.png",
+      "dimensions": [
+        116,
+        113
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "mascot/expressions",
+      "name": "excited",
+      "path": "mascot/expressions/excited.png",
+      "dimensions": [
+        116,
+        113
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "mascot/expressions",
+      "name": "thinking",
+      "path": "mascot/expressions/thinking.png",
+      "dimensions": [
+        116,
+        113
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "mascot/expressions",
+      "name": "surprised",
+      "path": "mascot/expressions/surprised.png",
+      "dimensions": [
+        116,
+        113
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "mascot/expressions",
+      "name": "sad",
+      "path": "mascot/expressions/sad.png",
+      "dimensions": [
+        116,
+        113
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "mascot/expressions",
+      "name": "winking",
+      "path": "mascot/expressions/winking.png",
+      "dimensions": [
+        116,
+        113
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "mascot/actions",
+      "name": "earn",
+      "path": "mascot/actions/earn.png",
+      "dimensions": [
+        122,
+        147
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "mascot/actions",
+      "name": "save",
+      "path": "mascot/actions/save.png",
+      "dimensions": [
+        122,
+        147
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "mascot/actions",
+      "name": "shop",
+      "path": "mascot/actions/shop.png",
+      "dimensions": [
+        122,
+        147
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "mascot/actions",
+      "name": "pay",
+      "path": "mascot/actions/pay.png",
+      "dimensions": [
+        122,
+        147
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "mascot/actions",
+      "name": "security",
+      "path": "mascot/actions/security.png",
+      "dimensions": [
+        122,
+        147
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "mascot/actions",
+      "name": "celebrate",
+      "path": "mascot/actions/celebrate.png",
+      "dimensions": [
+        122,
+        147
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "avatars",
+      "name": "avatar-01",
+      "path": "avatars/avatar-01.png",
+      "dimensions": [
+        94,
+        104
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "avatars",
+      "name": "avatar-02",
+      "path": "avatars/avatar-02.png",
+      "dimensions": [
+        94,
+        104
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "avatars",
+      "name": "avatar-03",
+      "path": "avatars/avatar-03.png",
+      "dimensions": [
+        94,
+        104
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "avatars",
+      "name": "avatar-04",
+      "path": "avatars/avatar-04.png",
+      "dimensions": [
+        94,
+        104
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "avatars",
+      "name": "avatar-05",
+      "path": "avatars/avatar-05.png",
+      "dimensions": [
+        94,
+        104
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "avatars",
+      "name": "avatar-06",
+      "path": "avatars/avatar-06.png",
+      "dimensions": [
+        94,
+        104
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "avatars",
+      "name": "avatar-07",
+      "path": "avatars/avatar-07.png",
+      "dimensions": [
+        94,
+        104
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "avatars",
+      "name": "avatar-08",
+      "path": "avatars/avatar-08.png",
+      "dimensions": [
+        94,
+        104
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "characters",
+      "name": "teacher",
+      "path": "characters/teacher.png",
+      "dimensions": [
+        100,
+        118
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "characters",
+      "name": "bank-guide",
+      "path": "characters/bank-guide.png",
+      "dimensions": [
+        100,
+        118
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "characters",
+      "name": "shopkeeper",
+      "path": "characters/shopkeeper.png",
+      "dimensions": [
+        100,
+        118
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "characters",
+      "name": "delivery-worker",
+      "path": "characters/delivery-worker.png",
+      "dimensions": [
+        100,
+        118
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "characters",
+      "name": "security-officer",
+      "path": "characters/security-officer.png",
+      "dimensions": [
+        100,
+        118
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "characters",
+      "name": "fraud-character",
+      "path": "characters/fraud-character.png",
+      "dimensions": [
+        100,
+        118
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "characters",
+      "name": "doctor",
+      "path": "characters/doctor.png",
+      "dimensions": [
+        100,
+        118
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "characters",
+      "name": "grandfather",
+      "path": "characters/grandfather.png",
+      "dimensions": [
+        100,
+        118
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "characters",
+      "name": "grandmother",
+      "path": "characters/grandmother.png",
+      "dimensions": [
+        100,
+        118
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "characters",
+      "name": "father",
+      "path": "characters/father.png",
+      "dimensions": [
+        100,
+        118
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "characters",
+      "name": "mother",
+      "path": "characters/mother.png",
+      "dimensions": [
+        100,
+        118
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "icons",
+      "name": "home",
+      "path": "icons/home.png",
+      "dimensions": [
+        74,
+        51
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "icons",
+      "name": "learning-map",
+      "path": "icons/learning-map.png",
+      "dimensions": [
+        74,
+        51
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "icons",
+      "name": "lessons",
+      "path": "icons/lessons.png",
+      "dimensions": [
+        74,
+        51
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "icons",
+      "name": "missions",
+      "path": "icons/missions.png",
+      "dimensions": [
+        74,
+        51
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "icons",
+      "name": "wallet",
+      "path": "icons/wallet.png",
+      "dimensions": [
+        74,
+        51
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "icons",
+      "name": "savings-vault",
+      "path": "icons/savings-vault.png",
+      "dimensions": [
+        74,
+        51
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "icons",
+      "name": "bankoo-shop",
+      "path": "icons/bankoo-shop.png",
+      "dimensions": [
+        74,
+        51
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "icons",
+      "name": "e-payment",
+      "path": "icons/e-payment.png",
+      "dimensions": [
+        74,
+        51
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "icons",
+      "name": "invoices",
+      "path": "icons/invoices.png",
+      "dimensions": [
+        74,
+        51
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "icons",
+      "name": "digital-security",
+      "path": "icons/digital-security.png",
+      "dimensions": [
+        74,
+        51
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "icons",
+      "name": "achievements",
+      "path": "icons/achievements.png",
+      "dimensions": [
+        74,
+        51
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "icons",
+      "name": "certificates",
+      "path": "icons/certificates.png",
+      "dimensions": [
+        74,
+        51
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "icons",
+      "name": "reports",
+      "path": "icons/reports.png",
+      "dimensions": [
+        74,
+        51
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "icons",
+      "name": "settings",
+      "path": "icons/settings.png",
+      "dimensions": [
+        74,
+        51
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "finance",
+      "name": "savings-safe-blue",
+      "path": "finance/savings-safe-blue.png",
+      "dimensions": [
+        270,
+        137
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "finance",
+      "name": "virtual-card-demo",
+      "path": "finance/virtual-card-demo.png",
+      "dimensions": [
+        261,
+        123
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "finance",
+      "name": "payment-methods-demo",
+      "path": "finance/payment-methods-demo.png",
+      "dimensions": [
+        283,
+        122
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "finance",
+      "name": "utility-bills-water-electricity-internet",
+      "path": "finance/utility-bills-water-electricity-internet.png",
+      "dimensions": [
+        296,
+        137
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "documents",
+      "name": "certificates-demo",
+      "path": "documents/certificates-demo.png",
+      "dimensions": [
+        256,
+        129
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "world",
+      "name": "bankoo-world-school-shop-bank",
+      "path": "world/bankoo-world-school-shop-bank.png",
+      "dimensions": [
+        772,
+        127
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "world",
+      "name": "shop-stand",
+      "path": "world/shop-stand.png",
+      "dimensions": [
+        326,
+        149
+      ],
+      "source": "board-1"
+    },
+    {
+      "category": "products",
+      "name": "schoolbag",
+      "path": "products/schoolbag.png",
+      "dimensions": [
+        80,
+        64
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "products",
+      "name": "notebook",
+      "path": "products/notebook.png",
+      "dimensions": [
+        80,
+        64
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "products",
+      "name": "pencils",
+      "path": "products/pencils.png",
+      "dimensions": [
+        80,
+        64
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "products",
+      "name": "headphones",
+      "path": "products/headphones.png",
+      "dimensions": [
+        80,
+        64
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "products",
+      "name": "soccer-ball",
+      "path": "products/soccer-ball.png",
+      "dimensions": [
+        80,
+        64
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "products",
+      "name": "board-game",
+      "path": "products/board-game.png",
+      "dimensions": [
+        80,
+        64
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "products",
+      "name": "plant",
+      "path": "products/plant.png",
+      "dimensions": [
+        80,
+        64
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "products",
+      "name": "color-palette",
+      "path": "products/color-palette.png",
+      "dimensions": [
+        80,
+        64
+      ],
+      "source": "board-2"
+    },
+    {
+      "category": "world/zones",
+      "name": "city-of-money",
+      "path": "world/zones/city-of-money.png",
+      "dimensions": [
+        124,
+        81
+      ],
+      "source": "board-1"
+    },
+    {
+      "category": "world/zones",
+      "name": "savings-forest",
+      "path": "world/zones/savings-forest.png",
+      "dimensions": [
+        120,
+        81
+      ],
+      "source": "board-1"
+    },
+    {
+      "category": "world/zones",
+      "name": "bankoo-market",
+      "path": "world/zones/bankoo-market.png",
+      "dimensions": [
+        122,
+        81
+      ],
+      "source": "board-1"
+    },
+    {
+      "category": "world/zones",
+      "name": "payments-city",
+      "path": "world/zones/payments-city.png",
+      "dimensions": [
+        111,
+        81
+      ],
+      "source": "board-1"
+    },
+    {
+      "category": "world/zones",
+      "name": "security-castle",
+      "path": "world/zones/security-castle.png",
+      "dimensions": [
+        112,
+        81
+      ],
+      "source": "board-1"
+    },
+    {
+      "category": "world/zones",
+      "name": "future-world",
+      "path": "world/zones/future-world.png",
+      "dimensions": [
+        128,
+        81
+      ],
+      "source": "board-1"
+    }
+  ],
+  "vector_icons": [
+    "icons-vector-svg/home.svg",
+    "icons-vector-svg/learning-map.svg",
+    "icons-vector-svg/lessons.svg",
+    "icons-vector-svg/missions.svg",
+    "icons-vector-svg/wallet.svg",
+    "icons-vector-svg/savings-vault.svg",
+    "icons-vector-svg/bankoo-shop.svg",
+    "icons-vector-svg/e-payment.svg",
+    "icons-vector-svg/qr-pay.svg",
+    "icons-vector-svg/invoices.svg",
+    "icons-vector-svg/utility-bills.svg",
+    "icons-vector-svg/digital-security.svg",
+    "icons-vector-svg/achievements.svg",
+    "icons-vector-svg/certificates.svg",
+    "icons-vector-svg/reports.svg",
+    "icons-vector-svg/settings.svg",
+    "icons-vector-svg/bankooz-coin.svg",
+    "icons-vector-svg/savings-jar.svg",
+    "icons-vector-svg/savings-goal.svg",
+    "icons-vector-svg/delivery.svg",
+    "icons-vector-svg/school.svg",
+    "icons-vector-svg/shopping-cart.svg",
+    "icons-vector-svg/avatar.svg",
+    "icons-vector-svg/help.svg",
+    "icons-vector-svg/calendar.svg",
+    "icons-vector-svg/calculator.svg",
+    "icons-vector-svg/savings-lockbox.svg"
+  ]
+}
