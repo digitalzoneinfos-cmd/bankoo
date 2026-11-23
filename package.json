@@ -1,0 +1,12 @@
+{
+  "name": "bankoo",
+  "private": true,
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "test": "npm --workspace @bankoo/economy test",
+    "slice": "cd apps/web-slice && python3 -m http.server 8080",
+    "prisma:validate": "prisma validate"
+  },
+  "devDependencies": { "prisma": "^7.0.0", "dotenv": "^16.4.0" },
+  "engines": { "node": ">=22.18" }
+}

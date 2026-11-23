@@ -1,0 +1,572 @@
+// BANKOO — production data model (PostgreSQL). Every tenant-owned row carries tenantId;
+// API guards + PostgreSQL Row-Level Security (ledger_guards.sql) enforce isolation.
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+}
+
+enum RoleName {
+  SUPER_ADMIN
+  SCHOOL_ADMIN
+  TEACHER
+  STUDENT
+  PARENT
+}
+enum AgeBand {
+  AGE_6_8
+  AGE_9_12
+  AGE_13_16
+}
+enum AccountKind {
+  STUDENT_WALLET
+  STUDENT_SAVINGS
+  SCHOOL_TREASURY
+  SCHOOL_UTILITIES
+  SCHOOL_SHOP
+  FRAUD_SIM
+}
+enum TxType {
+  SALARY
+  BILL_PAYMENT
+  REWARD
+  PURCHASE
+  SAVINGS_MOVE
+  FRAUD_LOSS
+  FRAUD_RECOVERY
+  ADJUSTMENT
+  REVERSAL
+}
+enum InvoiceStatus {
+  PENDING
+  PAID
+  WAIVED
+}
+enum OrderStatus {
+  PAID
+  AWAITING_APPROVAL
+  DELIVERED
+  CANCELLED
+}
+enum PayMethod {
+  BANKOO_CARD
+  VIRTUAL_PHONE
+  INTERNAL_QR
+  CASH_BANKOOZ
+}
+enum NodeKind {
+  LESSON
+  CHALLENGE
+  REWARD_CHEST
+  FINAL
+}
+enum SubStatus {
+  TRIAL
+  ACTIVE
+  PAST_DUE
+  CANCELLED
+}
+
+// ---------- SaaS / tenancy ----------
+model Tenant {
+  id            String   @id @default(uuid())
+  name          String
+  wilaya        String?
+  createdAt     DateTime @default(now())
+  school        School?
+  subscription  Subscription?
+  settings      SchoolSettings?
+  memberships   SchoolMembership[]
+  classrooms    Classroom[]
+  accounts      LedgerAccount[]
+  products      Product[]
+  auditLogs     AuditLog[]
+}
+
+model School {
+  id        String @id @default(uuid())
+  tenantId  String @unique
+  tenant    Tenant @relation(fields: [tenantId], references: [id])
+  code      String @unique           // short school code used in class login
+  address   String?
+  logoKey   String?                  // S3 object key
+}
+
+model Plan {
+  id            String @id @default(uuid())
+  name          String
+  maxStudents   Int
+  priceDzdMonth Int                  // real DZD — billing of schools, never shown to children
+  features      Json
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id        String    @id @default(uuid())
+  tenantId  String    @unique
+  tenant    Tenant    @relation(fields: [tenantId], references: [id])
+  planId    String
+  plan      Plan      @relation(fields: [planId], references: [id])
+  status    SubStatus @default(TRIAL)
+  periodEnd DateTime
+}
+
+model SchoolSettings {
+  tenantId          String  @id
+  tenant            Tenant  @relation(fields: [tenantId], references: [id])
+  salaryAmount      Int     @default(10)
+  salaryWeekday     Int     @default(6)    // Saturday
+  billAmount        Int     @default(4)
+  billWeekday       Int     @default(0)    // Sunday
+  runHour           Int     @default(8)    // Africa/Algiers
+  salaryEnabled     Boolean @default(true)
+  billsEnabled      Boolean @default(true)
+  fraudSimEnabled   Boolean @default(true)
+  fraudMaxLoss      Int     @default(3)
+  rewardCapPerDay   Int     @default(20)
+  rewardMin         Int     @default(1)    // bounds a teacher may configure within
+  rewardMax         Int     @default(5)
+  holidays          SchoolHoliday[]
+}
+
+model SchoolHoliday {
+  tenantId String
+  day      DateTime @db.Date
+  label    String?
+  settings SchoolSettings @relation(fields: [tenantId], references: [tenantId])
+  @@id([tenantId, day])
+}
+
+// ---------- identity ----------
+model User {
+  id           String   @id @default(uuid())
+  email        String?  @unique         // adults only; children have no email
+  passwordHash String?                  // argon2id
+  displayName  String
+  isSuperAdmin Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  memberships  SchoolMembership[]
+  student      StudentProfile?
+}
+
+model Role {
+  name RoleName @id
+  description String
+  memberships SchoolMembership[]
+}
+
+model SchoolMembership {
+  id        String   @id @default(uuid())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  role      RoleName
+  roleRef   Role     @relation(fields: [role], references: [name])
+  @@unique([tenantId, userId, role])
+  @@index([tenantId])
+}
+
+model Classroom {
+  id         String   @id @default(uuid())
+  tenantId   String
+  tenant     Tenant   @relation(fields: [tenantId], references: [id])
+  name       String
+  joinCode   String   @unique        // e.g. "AMAL-4B" — rotated by teacher
+  teacherId  String
+  students   StudentProfile[]
+  @@index([tenantId])
+}
+
+model StudentProfile {
+  id           String    @id @default(uuid())
+  tenantId     String
+  userId       String    @unique
+  user         User      @relation(fields: [userId], references: [id])
+  classroomId  String?
+  classroom    Classroom? @relation(fields: [classroomId], references: [id])
+  nickname     String                 // first name / nickname only
+  age          Int
+  ageBand      AgeBand                // derived, teacher can override
+  loginPinHash String                 // 4–6 digit picture/number PIN, hashed, rate-limited
+  avatarId     String?
+  avatar       Avatar?   @relation(fields: [avatarId], references: [id])
+  avatarCustom Json?                  // shirt colour, glasses, headphones, bag
+  isDemo       Boolean   @default(false)
+  guardians    GuardianLink[]
+  progress     LearningProgress[]
+  attempts     LessonAttempt[]
+  goals        SavingsGoal[]
+  @@index([tenantId, classroomId])
+}
+
+model GuardianLink {
+  studentId String
+  parentId  String
+  consentAt DateTime?
+  student   StudentProfile @relation(fields: [studentId], references: [id])
+  @@id([studentId, parentId])
+}
+
+model Avatar {
+  id String @id
+  label String
+  assetKey String
+  tags String[]
+  students StudentProfile[]
+}
+
+// ---------- curriculum ----------
+model LearningMap {
+  id String @id
+  title String
+  zones LearningZone[]
+}
+model LearningZone {
+  id      String @id
+  mapId   String
+  map     LearningMap @relation(fields: [mapId], references: [id])
+  order   Int
+  title   String
+  theme   String
+  lessons Lesson[]
+}
+
+model Lesson {
+  id             String    @id
+  zoneId         String
+  zone           LearningZone @relation(fields: [zoneId], references: [id])
+  order          Int
+  kind           NodeKind  @default(LESSON)
+  title          String
+  objective      String                // measurable learning goal
+  ageBands       AgeBand[]
+  prerequisites  String[]               // lesson ids
+  rewardBankooz  Int       @default(3)
+  rewardStars    Int       @default(1)
+  masteryRule    Json                   // e.g. {"checks":2,"correctAfterHint":true}
+  version        Int       @default(1)
+  published      Boolean   @default(false)
+  reviewedBy     String?                // pedagogical review sign-off
+  scenes         LessonScene[]
+}
+
+model LessonScene {
+  id         String @id @default(uuid())
+  lessonId   String
+  lesson     Lesson @relation(fields: [lessonId], references: [id])
+  order      Int
+  mascotPose String                     // welcome | explain | think | correct | wrong | save | pay | success | warn | complete
+  narration  String
+  audioKey   String?
+  activity   LessonActivity?
+}
+
+model LessonActivity {
+  id        String @id @default(uuid())
+  sceneId   String @unique
+  scene     LessonScene @relation(fields: [sceneId], references: [id])
+  type      String                       // count-coins | compare-prices | drag-to-jar | choose-payment | spot-red-flags | quiz
+  config    Json
+  questions Question[]
+}
+
+model Question {
+  id         String @id @default(uuid())
+  activityId String
+  activity   LessonActivity @relation(fields: [activityId], references: [id])
+  prompt     String
+  hint       String
+  explainWrong String                    // re-explains with a different example
+  options    AnswerOption[]
+}
+model AnswerOption {
+  id String @id @default(uuid())
+  questionId String
+  question Question @relation(fields: [questionId], references: [id])
+  label String
+  imageKey String?
+  correct Boolean
+}
+
+model LessonAttempt {
+  id         String   @id @default(uuid())
+  tenantId   String
+  studentId  String
+  student    StudentProfile @relation(fields: [studentId], references: [id])
+  lessonId   String
+  questionId String?
+  answerId   String?
+  correct    Boolean
+  hintUsed   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  @@index([tenantId, lessonId])
+}
+
+model LearningProgress {
+  tenantId   String
+  studentId  String
+  student    StudentProfile @relation(fields: [studentId], references: [id])
+  lessonId   String
+  sceneIndex Int      @default(0)
+  mastered   Boolean  @default(false)
+  stars      Int      @default(0)
+  unlockedBy String?                     // teacher id if opened manually
+  updatedAt  DateTime @updatedAt
+  @@id([tenantId, studentId, lessonId])
+}
+
+// ---------- missions ----------
+model Mission {
+  id          String  @id @default(uuid())
+  tenantId    String?                    // null = platform catalogue
+  title       String
+  objective   String
+  type        String                     // tidy-shop | compare-prices | needs-vs-wants | change | budget | safe-payment | read-receipt | spot-offer | save-goal | help-decide
+  config      Json
+  reward      Int
+  needsTeacherApproval Boolean @default(false)
+  assignments MissionAssignment[]
+}
+model MissionAssignment {
+  id String @id @default(uuid())
+  tenantId String
+  missionId String
+  mission Mission @relation(fields: [missionId], references: [id])
+  classroomId String?
+  studentId String?
+  dueAt DateTime?
+  completions MissionCompletion[]
+}
+model MissionCompletion {
+  id String @id @default(uuid())
+  tenantId String
+  assignmentId String
+  assignment MissionAssignment @relation(fields: [assignmentId], references: [id])
+  studentId String
+  result Json
+  approvedBy String?
+  txId String?
+  createdAt DateTime @default(now())
+  @@unique([assignmentId, studentId])
+}
+
+// ---------- economy (double-entry ledger) ----------
+model Wallet {
+  studentId String @id
+  tenantId String
+  cardAlias String @unique  // BNK-XXXX-TRAINING, non-banking
+}
+
+model LedgerAccount {
+  id            String      @id @default(uuid())
+  tenantId      String
+  tenant        Tenant      @relation(fields: [tenantId], references: [id])
+  ownerStudentId String?
+  kind          AccountKind
+  allowNegative Boolean     @default(false)
+  entries       LedgerEntry[]
+  @@unique([tenantId, ownerStudentId, kind])
+}
+
+model Transaction {
+  id             String   @id @default(uuid())
+  tenantId       String
+  idempotencyKey String
+  type           TxType
+  memo           String
+  actorUserId    String?
+  reason         String?
+  reversesTxId   String?
+  payloadHash    String
+  createdAt      DateTime @default(now())
+  entries        LedgerEntry[]
+  @@unique([tenantId, idempotencyKey])
+  @@index([tenantId, createdAt])
+}
+
+model LedgerEntry {
+  id        BigInt        @id @default(autoincrement())
+  txId      String
+  tx        Transaction   @relation(fields: [txId], references: [id])
+  accountId String
+  account   LedgerAccount @relation(fields: [accountId], references: [id])
+  amount    Int                                   // signed whole Bankooz; sum per tx = 0
+  @@index([accountId])
+}
+
+model RewardClaim {
+  tenantId String
+  studentId String
+  activityKey String
+  txId String
+  localDay DateTime @db.Date
+  amount Int
+  @@id([tenantId, studentId, activityKey])
+}
+
+model SavingsGoal {
+  id String @id @default(uuid())
+  tenantId String
+  studentId String
+  student StudentProfile @relation(fields: [studentId], references: [id])
+  productId String?
+  title String
+  target Int
+  reachedAt DateTime?
+}
+
+model Invoice {
+  id        String        @id @default(uuid())
+  tenantId  String
+  studentId String
+  periodKey String
+  kind      String        @default("UTILITIES")
+  lines     Json                                  // water / electricity / internet split for teaching
+  amount    Int
+  status    InvoiceStatus @default(PENDING)
+  paidTxId  String?
+  createdAt DateTime      @default(now())
+  @@unique([tenantId, studentId, kind, periodKey])
+}
+
+// ---------- shop ----------
+model Product {
+  id            String  @id @default(uuid())
+  tenantId      String
+  tenant        Tenant  @relation(fields: [tenantId], references: [id])
+  name          String
+  description   String?
+  category      String
+  imageKey      String?
+  price         Int
+  minAge        Int     @default(6)
+  maxAge        Int     @default(16)
+  visible       Boolean @default(true)
+  needsApproval Boolean @default(false)
+  isClassReward Boolean @default(false)
+  inventory     Inventory?
+}
+model Inventory {
+  productId String @id
+  product Product @relation(fields: [productId], references: [id])
+  stock Int
+  version Int @default(0)
+}
+model Cart {
+  id String @id @default(uuid())
+  tenantId String
+  studentId String @unique
+  items Json
+  updatedAt DateTime @updatedAt
+}
+model Order {
+  id String @id @default(uuid())
+  tenantId String
+  studentId String
+  idempotencyKey String
+  total Int
+  status OrderStatus
+  txId String?
+  deliveredAt DateTime?
+  createdAt DateTime @default(now())
+  items OrderItem[]
+  payment PaymentSimulation?
+  @@unique([tenantId, idempotencyKey])
+}
+model OrderItem {
+  orderId String
+  order Order @relation(fields: [orderId], references: [id])
+  productId String
+  qty Int
+  unitPrice Int
+  @@id([orderId, productId])
+}
+model PaymentSimulation {
+  orderId String @id
+  order Order @relation(fields: [orderId], references: [id])
+  method PayMethod
+  steps Json  // select→review→confirm→pay→receipt timestamps
+}
+
+// ---------- safety training ----------
+model FraudScenario {
+  id String @id
+  ageBands AgeBand[]
+  sender String
+  subject String
+  body String
+  redFlags String[]
+  choices Json
+  severity Int @default(1)
+}
+model FraudAttempt {
+  id String @id @default(uuid())
+  tenantId String
+  studentId String
+  scenarioId String
+  choice String
+  safe Boolean
+  lossTxId String?
+  recoveredTxId String?
+  createdAt DateTime @default(now())
+}
+
+// ---------- motivation & documents ----------
+model Badge {
+  id String @id
+  title String
+  skill String
+  iconKey String
+  achievements Achievement[]
+}
+model Achievement {
+  id String @id @default(uuid())
+  tenantId String
+  studentId String
+  badgeId String
+  badge Badge @relation(fields: [badgeId], references: [id])
+  earnedAt DateTime @default(now())
+  @@unique([studentId, badgeId])
+}
+model Certificate {
+  id String @id @default(uuid())
+  tenantId String
+  studentId String
+  kind String
+  refId String?
+  issuedAt DateTime @default(now())
+  verifyCode String @unique
+}
+model PrintableDocument {
+  id String @id @default(uuid())
+  tenantId String
+  kind String
+  refId String
+  fileKey String
+  createdBy String
+  createdAt DateTime @default(now())
+}
+model Notification {
+  id String @id @default(uuid())
+  tenantId String
+  userId String
+  kind String
+  payload Json
+  readAt DateTime?
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id          BigInt   @id @default(autoincrement())
+  tenantId    String?
+  tenant      Tenant?  @relation(fields: [tenantId], references: [id])
+  actorUserId String?
+  action      String
+  target      String?
+  reason      String?
+  ip          String?
+  at          DateTime @default(now())
+  @@index([tenantId, at])
+}

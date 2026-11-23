@@ -1,0 +1,8 @@
+{
+  "name": "@bankoo/economy",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "scripts": { "test": "node --no-warnings --test test/*.test.ts" },
+  "engines": { "node": ">=22.18" }
+}
